@@ -5,8 +5,7 @@ resource "google_pubsub_subscription" "notfound_request_to_function" {
 }
 
 data "google_storage_bucket" "source" {
-  project = var.project
-  name    = var.temporary_artifact_bucket_name
+  name = var.temporary_artifact_bucket_name
 }
 
 data "archive_file" "default" {
