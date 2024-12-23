@@ -38,6 +38,10 @@ module "scanning_attack_detector" {
 - `google_logging_project_sink.notfound_sink`: A logging sink to capture 404 requests.
 - `google_pubsub_topic.income_notfound_request`: A Pub/Sub topic to handle incoming 404 requests.
 
+## Requirements
+
+- Your GCP project must have the `Logging Admin` role on the service account.
+
 ## License
 
 This project is licensed under the MIT License.
