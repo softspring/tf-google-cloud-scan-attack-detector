@@ -4,10 +4,9 @@ resource "google_pubsub_subscription" "notfound_request_to_function" {
   topic   = google_pubsub_topic.income_notfound_request.name
 }
 
-
 data "google_storage_bucket" "source" {
-  name     = var.temporary_artifact_bucket_name
-  location = var.temporary_artifact_bucket_region ? var.temporary_artifact_bucket_region : var.region
+  project = var.project
+  name    = var.temporary_artifact_bucket_name
 }
 
 data "archive_file" "default" {
@@ -48,7 +47,7 @@ resource "google_cloudfunctions2_function" "attack_detector" {
       "REDIS_PORT"               = var.redis_port,
       "NOT_FOUND_REQUEST_WINDOW" = var.not_found_request_window,
       "NOT_FOUND_REQUEST_LIMIT"  = var.not_found_request_limit,
-      "ATTACK_PUBSUB_PROJECT"       = google_pubsub_topic.attack_detected.project,
+      "ATTACK_PUBSUB_PROJECT"    = google_pubsub_topic.attack_detected.project,
       "ATTACK_PUBSUB_TOPIC"      = google_pubsub_topic.attack_detected.name,
     }
   }
