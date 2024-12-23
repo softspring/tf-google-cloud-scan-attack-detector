@@ -11,8 +11,9 @@ data "google_storage_bucket" "source" {
 data "archive_file" "default" {
   type        = "zip"
   output_path = "/tmp/scan-attack-detector-function.zip"
-  source_dir  = "detector-function/"
+  source_dir  = "${path.module}/detector-function/"
 }
+
 resource "google_storage_bucket_object" "object" {
   name   = "scan-attack-detector-function.zip"
   bucket = data.google_storage_bucket.source.name
