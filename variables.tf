@@ -44,3 +44,24 @@ variable "sink_filter" {
 output "sink_filter" {
   value = var.sink_filter
 }
+
+variable "temporary_artifact_bucket_name" {
+  type        = string
+  description = "The name of the temporary artifact bucket"
+}
+
+variable "temporary_artifact_bucket_region" {
+  type        = string
+  description = "The region of the temporary artifact bucket. If not set, the default region is used."
+}
+
+variable "redis_host" {
+  type        = string
+  description = "The host of the Redis instance"
+}
+
+variable "redis_port" {
+  type        = number
+  description = "The port of the Redis instance"
+  default     = 6379
+}

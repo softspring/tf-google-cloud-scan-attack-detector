@@ -1,0 +1,7 @@
+{
+    "dependencies": {
+        "@google-cloud/functions-framework": "^3.4.4",
+        "@google-cloud/pubsub": "^4.9.0",
+        "redis": "^4.7.0"
+    }
+}
