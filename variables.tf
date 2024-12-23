@@ -60,3 +60,9 @@ variable "redis_port" {
   description = "The port of the Redis instance"
   default     = 6379
 }
+
+variable "redis_database" {
+  type        = number
+  description = "The database of the Redis instance (0 to 15)"
+  default     = 0
+}

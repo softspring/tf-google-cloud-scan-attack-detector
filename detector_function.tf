@@ -45,6 +45,7 @@ resource "google_cloudfunctions2_function" "attack_detector" {
     environment_variables = {
       "REDIS_HOST"               = var.redis_host,
       "REDIS_PORT"               = var.redis_port,
+      "REDIS_DATABASE"           = var.redis_database,
       "NOT_FOUND_REQUEST_WINDOW" = var.not_found_request_window,
       "NOT_FOUND_REQUEST_LIMIT"  = var.not_found_request_limit,
       "ATTACK_PUBSUB_PROJECT"    = google_pubsub_topic.attack_detected.project,

@@ -4,6 +4,7 @@ const redis = require('redis');
 
 const REDIS_HOST = process.env.REDIS_HOST || 'localhost';
 const REDIS_PORT = process.env.REDIS_PORT || 6379;
+const REDIS_DATABASE = process.env.REDIS_DATABASE || 0;
 const NOT_FOUND_REQUEST_WINDOW = process.env.NOT_FOUND_REQUEST_WINDOW;
 const NOT_FOUND_REQUEST_LIMIT = process.env.NOT_FOUND_REQUEST_LIMIT;
 const ATTACK_PUBSUB_PROJECT = process.env.ATTACK_PUBSUB_PROJECT;
@@ -17,6 +18,7 @@ const redisClient = redis.createClient({
 });
 redisClient.on('error', err => console.error('ERR:REDIS:', err));
 redisClient.connect();
+redisClient.select(REDIS_DATABASE)
 
 functions.cloudEvent('notFoundRequest', async (cloudEvent) => {
     const data = cloudEvent.data.message.data ? Buffer.from(cloudEvent.data.message.data, 'base64').toString() : '';
