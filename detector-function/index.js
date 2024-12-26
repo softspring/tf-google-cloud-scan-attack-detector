@@ -20,7 +20,7 @@ redisClient.on('error', err => console.error('ERR:REDIS:', err));
 redisClient.connect();
 redisClient.select(REDIS_DATABASE)
 
-functions.cloudEvent('notFoundRequest', async (cloudEvent) => {
+functions.cloudEvent('detectScanAttack', async (cloudEvent) => {
     const data = cloudEvent.data.message.data ? Buffer.from(cloudEvent.data.message.data, 'base64').toString() : '';
     const json = JSON.parse(data);
 
@@ -28,7 +28,7 @@ functions.cloudEvent('notFoundRequest', async (cloudEvent) => {
     const resource = json.protoPayload.resource || json.httpRequest.requestUrl || '';
 
     // random key prefixed by "ip:"
-    const key = json.protoPayload.ip + ':' + Math.random().toString(36).substring(7);
+    const key = 'sad:' + json.protoPayload.ip + ':' + Math.random().toString(36).substring(7);
 
     // set the key with an expiration time in seconds (TTL)
     await redisClient.set(key, resource, 'EX', NOT_FOUND_REQUEST_WINDOW);
@@ -36,7 +36,7 @@ functions.cloudEvent('notFoundRequest', async (cloudEvent) => {
     console.log(`Register not found request from ${fromIp} to ${resource}`);
 
     // count the number of keys with the same prefix
-    const count = await redisClient.keys(fromIp + ':*');
+    const count = await redisClient.keys('sad:' + fromIp + ':*');
 
     // if the count is greater than the limit, publish a message to the Pub/Sub topic
     if (count.length >= NOT_FOUND_REQUEST_LIMIT) {
