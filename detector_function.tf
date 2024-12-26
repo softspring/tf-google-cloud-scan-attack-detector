@@ -59,6 +59,13 @@ resource "google_cloudfunctions2_function" "attack_detector" {
       "ATTACK_PUBSUB_TOPIC"      = google_pubsub_topic.attack_detected.name,
     }
   }
+
+  event_trigger {
+    trigger_region = var.region
+    event_type = "google.cloud.pubsub.topic.v1.messagePublished"
+    pubsub_topic = google_pubsub_topic.income_notfound_request.id
+    retry_policy = "RETRY_POLICY_RETRY"
+  }
 }
 
 resource "google_cloud_run_service_iam_member" "member" {
