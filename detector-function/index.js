@@ -24,8 +24,8 @@ functions.cloudEvent('notFoundRequest', async (cloudEvent) => {
     const data = cloudEvent.data.message.data ? Buffer.from(cloudEvent.data.message.data, 'base64').toString() : '';
     const json = JSON.parse(data);
 
-    const fromIp = json.protoPayload.ip || '';
-    const resource = json.protoPayload.resource || '';
+    const fromIp = json.protoPayload.ip || json.httpRequest.remoteIp || '';
+    const resource = json.protoPayload.resource || json.httpRequest.requestUrl || '';
 
     // random key prefixed by "ip:"
     const key = json.protoPayload.ip + ':' + Math.random().toString(36).substring(7);
