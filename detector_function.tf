@@ -58,13 +58,16 @@ resource "google_cloudfunctions2_function" "attack_detector" {
       "ATTACK_PUBSUB_PROJECT"    = google_pubsub_topic.attack_detected.project,
       "ATTACK_PUBSUB_TOPIC"      = google_pubsub_topic.attack_detected.name,
     }
+
+    vpc_connector                 = var.redis_vpc_connector_id
+    vpc_connector_egress_settings = var.redis_vpc_connector_egress_settings
   }
 
   event_trigger {
     trigger_region = var.region
-    event_type = "google.cloud.pubsub.topic.v1.messagePublished"
-    pubsub_topic = google_pubsub_topic.income_notfound_request.id
-    retry_policy = "RETRY_POLICY_RETRY"
+    event_type     = "google.cloud.pubsub.topic.v1.messagePublished"
+    pubsub_topic   = google_pubsub_topic.income_notfound_request.id
+    retry_policy   = "RETRY_POLICY_RETRY"
   }
 }
 

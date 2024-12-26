@@ -66,3 +66,15 @@ variable "redis_database" {
   description = "The database of the Redis instance (0 to 15)"
   default     = 0
 }
+
+variable "redis_vpc_connector_id" {
+  type        = string
+  description = "The ID of the VPC connector to use for the Redis instance"
+  default     = null
+}
+
+variable "redis_vpc_connector_egress_settings" {
+  type        = string
+  description = "The egress settings to use for the VPC connector"
+  default     = null
+}
