@@ -1,12 +1,3 @@
-resource "google_pubsub_subscription" "notfound_request_to_function" {
-  project = var.project
-  name    = "${var.resource_prefix}-income-notfound-request-to-function"
-  topic   = google_pubsub_topic.income_notfound_request.name
-  labels = {
-    "component" = "scan-attack-detector"
-  }
-}
-
 data "google_storage_bucket" "source" {
   name = var.temporary_artifact_bucket_name
 }
