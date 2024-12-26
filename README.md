@@ -71,7 +71,7 @@ module "scanning_attack_detector" {
 
 ## Requirements
 
-- Your GCP project must have the `Logging Admin` role on the service account.
+- Your GCP project must have the `Logging Admin` role on the service account (in other case, you will see "logging.sinks.create" permission error).
 
 ## License
 
