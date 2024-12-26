@@ -8,4 +8,7 @@ resource "google_logging_project_sink" "notfound_sink" {
 resource "google_pubsub_topic" "income_notfound_request" {
   project = var.project
   name    = "${var.resource_prefix}-income-notfound-request"
+  labels = {
+    "component" = "scan-attack-detector"
+  }
 }
