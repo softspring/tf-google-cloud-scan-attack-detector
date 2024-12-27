@@ -17,18 +17,38 @@ const redisClient = redis.createClient({
     },
 });
 redisClient.on('error', err => console.error('ERR:REDIS:', err));
-redisClient.connect();
-redisClient.select(REDIS_DATABASE)
 
 functions.cloudEvent('detectScanAttack', async (cloudEvent) => {
     const data = cloudEvent.data.message.data ? Buffer.from(cloudEvent.data.message.data, 'base64').toString() : '';
     const json = JSON.parse(data);
 
-    const fromIp = json.protoPayload.ip || json.httpRequest.remoteIp || '';
-    const resource = json.protoPayload.resource || json.httpRequest.requestUrl || '';
+    if (json === null) {
+        throw new Error('Invalid JSON data:', data);
+    }
+
+    let fromIp;
+    if (json.protoPayload && json.protoPayload.ip) {
+        fromIp = json.protoPayload.ip;
+    } else if (json.httpRequest && json.httpRequest.remoteIp) {
+        fromIp = json.httpRequest.remoteIp;
+    } else {
+        throw new Error('No IP address found in the JSON data:', data);
+    }
+
+    let resource;
+    if (json.protoPayload && json.protoPayload.resource) {
+        resource = json.protoPayload.resource;
+    } else if (json.httpRequest && json.httpRequest.requestUrl) {
+        resource = json.httpRequest.requestUrl;
+    } else {
+        throw new Error('No resource found in the JSON data:', data);
+    }
 
     // random key prefixed by "ip:"
-    const key = 'sad:' + json.protoPayload.ip + ':' + Math.random().toString(36).substring(7);
+    const key = 'sad:' + fromIp + ':' + Math.random().toString(36).substring(7);
+
+    await redisClient.connect();
+    await redisClient.select(REDIS_DATABASE);
 
     // set the key with an expiration time in seconds (TTL)
     await redisClient.set(key, resource, 'EX', NOT_FOUND_REQUEST_WINDOW);

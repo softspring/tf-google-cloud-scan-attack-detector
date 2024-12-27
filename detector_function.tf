@@ -36,8 +36,8 @@ resource "google_cloudfunctions2_function" "attack_detector" {
   }
 
   service_config {
-    max_instance_count = 1
-    available_memory   = "256M"
+    max_instance_count = var.function_max_instance_count
+    available_memory   = var.function_available_memory
     timeout_seconds    = 60
 
     environment_variables = {

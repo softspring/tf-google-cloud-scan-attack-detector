@@ -78,3 +78,15 @@ variable "redis_vpc_connector_egress_settings" {
   description = "The egress settings to use for the VPC connector"
   default     = null
 }
+
+variable "function_available_memory" {
+  type        = string
+  description = "The available memory for the function"
+  default     = "256M"
+}
+
+variable "function_max_instance_count" {
+  type        = number
+  description = "The maximum number of instances for the function"
+  default     = 1
+}
