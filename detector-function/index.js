@@ -17,6 +17,8 @@ const redisClient = redis.createClient({
     },
 });
 redisClient.on('error', err => console.error('ERR:REDIS:', err));
+redisClient.connect();
+redisClient.select(REDIS_DATABASE);
 
 functions.cloudEvent('detectScanAttack', async (cloudEvent) => {
     const data = cloudEvent.data.message.data ? Buffer.from(cloudEvent.data.message.data, 'base64').toString() : '';
@@ -46,9 +48,6 @@ functions.cloudEvent('detectScanAttack', async (cloudEvent) => {
 
     // random key prefixed by "ip:"
     const key = 'sad:' + fromIp + ':' + Math.random().toString(36).substring(7);
-
-    await redisClient.connect();
-    await redisClient.select(REDIS_DATABASE);
 
     // set the key with an expiration time in seconds (TTL)
     await redisClient.set(key, resource, 'EX', NOT_FOUND_REQUEST_WINDOW);
