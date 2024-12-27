@@ -8,7 +8,7 @@ resource "random_string" "suffix" {
 }
 
 locals {
-  zip_file_name = "scan-attack-detector-function-${random_string.suffix}.zip"
+  zip_file_name = "scan-attack-detector-function-${random_string.suffix.result}.zip"
 }
 
 data "archive_file" "default" {
