@@ -71,13 +71,6 @@ resource "google_cloudfunctions2_function" "attack_detector" {
   }
 }
 
-resource "google_cloud_run_service_iam_member" "member" {
-  location = google_cloudfunctions2_function.attack_detector.location
-  service  = google_cloudfunctions2_function.attack_detector.name
-  role     = "roles/run.invoker"
-  member   = "allUsers"
-}
-
 output "attack_detector_function" {
   value = google_cloudfunctions2_function.attack_detector
 }
@@ -90,4 +83,3 @@ resource "google_pubsub_topic" "attack_detected" {
 output "attack_detected_topic" {
   value = google_pubsub_topic.attack_detected
 }
-
