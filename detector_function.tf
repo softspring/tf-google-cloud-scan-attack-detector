@@ -34,7 +34,7 @@ resource "google_cloudfunctions2_function" "attack_detector" {
   }
 
   build_config {
-    runtime     = "nodejs20"
+    runtime     = var.function_runtime
     entry_point = "detectScanAttack"
     source {
       storage_source {

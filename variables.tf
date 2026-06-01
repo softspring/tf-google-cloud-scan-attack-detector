@@ -85,6 +85,12 @@ variable "function_available_memory" {
   default     = "256M"
 }
 
+variable "function_runtime" {
+  type        = string
+  description = "The Cloud Run functions Node.js runtime ID."
+  default     = "nodejs22"
+}
+
 variable "function_max_instance_count" {
   type        = number
   description = "The maximum number of instances for the function"

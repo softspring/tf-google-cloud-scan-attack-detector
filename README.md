@@ -55,6 +55,9 @@ module "scanning_attack_detector" {
 - `redis_database`: (Required) The database to use in the Redis instance. Default is `0`.
 - `redis_vpc_connector_id`: (Optional) The ID of the VPC Access Connector to use for the Redis instance. Default is `null`.
 - `redis_vpc_connector_egress_settings`: (Optional) The egress settings to use for the VPC Access Connector. Default is `null`.
+- `function_runtime`: (Optional) The Cloud Run functions Node.js runtime ID. Default is `nodejs22`.
+- `function_available_memory`: (Optional) The available memory for the detector function. Default is `256M`.
+- `function_max_instance_count`: (Optional) The maximum number of detector function instances. Default is `1`.
 
 ## Outputs
 
