@@ -50,13 +50,14 @@ resource "google_cloudfunctions2_function" "attack_detector" {
     timeout_seconds    = 60
 
     environment_variables = {
-      "REDIS_HOST"               = var.redis_host,
-      "REDIS_PORT"               = var.redis_port,
-      "REDIS_DATABASE"           = var.redis_database,
-      "NOT_FOUND_REQUEST_WINDOW" = var.not_found_request_window,
-      "NOT_FOUND_REQUEST_LIMIT"  = var.not_found_request_limit,
-      "ATTACK_PUBSUB_PROJECT"    = google_pubsub_topic.attack_detected.project,
-      "ATTACK_PUBSUB_TOPIC"      = google_pubsub_topic.attack_detected.name,
+      "REDIS_HOST"                    = var.redis_host,
+      "REDIS_PORT"                    = var.redis_port,
+      "REDIS_DATABASE"                = var.redis_database,
+      "NOT_FOUND_REQUEST_WINDOW"      = var.not_found_request_window,
+      "NOT_FOUND_REQUEST_LIMIT"       = var.not_found_request_limit,
+      "ATTACK_EVENT_COOLDOWN_SECONDS" = var.attack_event_cooldown_seconds,
+      "ATTACK_PUBSUB_PROJECT"         = google_pubsub_topic.attack_detected.project,
+      "ATTACK_PUBSUB_TOPIC"           = google_pubsub_topic.attack_detected.name,
     }
 
     vpc_connector                 = var.redis_vpc_connector_id

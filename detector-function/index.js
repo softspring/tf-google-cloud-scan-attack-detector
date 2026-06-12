@@ -9,6 +9,7 @@ const NOT_FOUND_REQUEST_WINDOW = process.env.NOT_FOUND_REQUEST_WINDOW;
 const NOT_FOUND_REQUEST_LIMIT = process.env.NOT_FOUND_REQUEST_LIMIT;
 const ATTACK_PUBSUB_PROJECT = process.env.ATTACK_PUBSUB_PROJECT;
 const ATTACK_PUBSUB_TOPIC = process.env.ATTACK_PUBSUB_TOPIC;
+const ATTACK_EVENT_COOLDOWN_SECONDS = Number(process.env.ATTACK_EVENT_COOLDOWN_SECONDS || 60 * 60);
 
 const redisClient = redis.createClient({
     socket: {
@@ -60,6 +61,17 @@ functions.cloudEvent('detectScanAttack', async (cloudEvent) => {
     // if the count is greater than the limit, publish a message to the Pub/Sub topic
     if (count.length >= NOT_FOUND_REQUEST_LIMIT) {
         console.log(`The number of not found requests from ${fromIp} is greater than ${NOT_FOUND_REQUEST_LIMIT} in a window of ${NOT_FOUND_REQUEST_WINDOW} seconds.`);
+
+        const cooldownKey = 'sad:attack-published:' + fromIp;
+        const cooldownSet = await redisClient.set(cooldownKey, '1', {
+            EX: ATTACK_EVENT_COOLDOWN_SECONDS,
+            NX: true,
+        });
+
+        if (cooldownSet === null) {
+            console.log(`Attack from ${fromIp} was already published in the last ${ATTACK_EVENT_COOLDOWN_SECONDS} seconds.`);
+            return null;
+        }
 
         const pubsub = new PubSub({
             projectId: ATTACK_PUBSUB_PROJECT,

@@ -35,6 +35,21 @@ output "not_found_request_limit" {
   value = var.not_found_request_limit
 }
 
+variable "attack_event_cooldown_seconds" {
+  type        = number
+  description = "The time window in seconds to suppress duplicate attack events for the same IP"
+  default     = 3600
+
+  validation {
+    condition     = var.attack_event_cooldown_seconds > 0
+    error_message = "attack_event_cooldown_seconds must be greater than 0."
+  }
+}
+
+output "attack_event_cooldown_seconds" {
+  value = var.attack_event_cooldown_seconds
+}
+
 variable "sink_filter" {
   type        = string
   description = "The filter to use for the sink"

@@ -52,8 +52,9 @@ module "scan_attack_detector" {
 
   sink_filter = "protoPayload.status=404 OR httpRequest.status=404"
 
-  not_found_request_window = 60
-  not_found_request_limit  = 10
+  not_found_request_window       = 60
+  not_found_request_limit        = 10
+  attack_event_cooldown_seconds  = 3600
 
   redis_host     = data.google_redis_instance.redis.host
   redis_port     = data.google_redis_instance.redis.port
@@ -78,6 +79,7 @@ Consumers can subscribe to `module.scan_attack_detector.attack_detected_topic` t
 4. The function extracts the requested resource from `protoPayload.resource` or `httpRequest.requestUrl`.
 5. The function stores one Redis key per not-found request using a TTL of `not_found_request_window` seconds.
 6. When the number of recent keys for the same IP reaches `not_found_request_limit`, the function publishes an attack event.
+7. After publishing an attack event for an IP, the function suppresses duplicate attack events for that same IP for `attack_event_cooldown_seconds`.
 
 The published attack event has this JSON shape:
 
@@ -123,6 +125,7 @@ The identity applying Terraform needs permission to create logging sinks, Pub/Su
 | `resource_prefix` | no | `scan-attack-detector` | Prefix used for created resource names. |
 | `not_found_request_window` | no | `60` | Time window, in seconds, used as the Redis TTL for not-found request counters. |
 | `not_found_request_limit` | no | `10` | Number of not-found requests from the same IP that triggers an attack event. |
+| `attack_event_cooldown_seconds` | no | `3600` | Time window, in seconds, used to suppress duplicate attack events for the same IP. |
 | `sink_filter` | no | `protoPayload.status=404 OR httpRequest.status=404` | Cloud Logging sink filter used to select incoming log entries. |
 | `redis_port` | no | `6379` | Redis port. |
 | `redis_database` | no | `0` | Redis database number. |
@@ -136,6 +139,7 @@ The identity applying Terraform needs permission to create logging sinks, Pub/Su
 
 - `not_found_request_window`: configured detection window.
 - `not_found_request_limit`: configured request threshold.
+- `attack_event_cooldown_seconds`: configured duplicate attack event suppression window.
 - `sink_filter`: configured Cloud Logging sink filter.
 - `attack_detector_function`: full `google_cloudfunctions2_function` resource object for the detector.
 - `attack_detected_topic`: full `google_pubsub_topic` resource object for detected attack events.
@@ -154,6 +158,7 @@ With the default `resource_prefix = "scan-attack-detector"`, the module creates:
 - The detector function expects log entries to include either `protoPayload.ip` or `httpRequest.remoteIp`.
 - The detector function expects the requested resource in either `protoPayload.resource` or `httpRequest.requestUrl`.
 - Every matching log entry creates a Redis key with the prefix `sad:<ip>:` and a TTL equal to `not_found_request_window`.
+- Every published attack event creates a Redis cooldown key with the prefix `sad:attack-published:<ip>` and a TTL equal to `attack_event_cooldown_seconds`.
 - The function uses Redis `KEYS` to count recent entries for an IP. Keep the Redis database dedicated or low-volume enough for this access pattern.
 - `function_max_instance_count` defaults to `1` to keep Redis counting behavior simple and limit downstream event fan-out.
 - The function source zip is generated in the module directory during Terraform operations and uploaded to the configured artifact bucket.

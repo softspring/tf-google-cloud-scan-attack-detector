@@ -52,6 +52,7 @@ Before making changes, read:
 - The exported function name is `detectScanAttack`; changing it requires updating Terraform `entry_point`.
 - The function reads configuration from environment variables defined in `detector_function.tf`.
 - Detection currently counts Redis keys prefixed with `sad:<ip>:` and expiring after `NOT_FOUND_REQUEST_WINDOW` seconds.
+- Published attack events are deduplicated per IP with Redis keys prefixed with `sad:attack-published:<ip>` and expiring after `ATTACK_EVENT_COOLDOWN_SECONDS`.
 - Review Redis access patterns before changing counting behavior. Avoid introducing unbounded memory growth.
 
 ## Validation
