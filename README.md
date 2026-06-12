@@ -95,7 +95,6 @@ The published attack event has this JSON shape:
 - Terraform 1.x.
 - Google provider version compatible with Cloud Functions v2, Pub/Sub, Cloud Logging sinks, and Cloud Storage objects.
 - Archive provider for packaging the detector function source.
-- Random provider for generating the source artifact suffix.
 - A Google Cloud project with billing enabled.
 - An existing Cloud Storage bucket for temporary function source artifacts.
 - An existing Redis instance reachable by the function.
@@ -161,7 +160,7 @@ With the default `resource_prefix = "scan-attack-detector"`, the module creates:
 - Every published attack event creates a Redis cooldown key with the prefix `sad:attack-published:<ip>` and a TTL equal to `attack_event_cooldown_seconds`.
 - The function uses Redis `KEYS` to count recent entries for an IP. Keep the Redis database dedicated or low-volume enough for this access pattern.
 - `function_max_instance_count` defaults to `1` to keep Redis counting behavior simple and limit downstream event fan-out.
-- The function source zip is generated in the module directory during Terraform operations and uploaded to the configured artifact bucket.
+- The function source zip is generated in the module directory during Terraform operations and uploaded to the configured artifact bucket with a content-addressed object name.
 
 ## Security
 

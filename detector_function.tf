@@ -2,13 +2,8 @@ data "google_storage_bucket" "source" {
   name = var.temporary_artifact_bucket_name
 }
 
-resource "random_string" "suffix" {
-  length = 4
-  lower  = true
-}
-
 locals {
-  zip_file_name = "scan-attack-detector-function-${random_string.suffix.result}.zip"
+  zip_file_name = "scan-attack-detector-function.zip"
 }
 
 data "archive_file" "default" {
@@ -18,7 +13,7 @@ data "archive_file" "default" {
 }
 
 resource "google_storage_bucket_object" "object" {
-  name   = local.zip_file_name
+  name   = "scan-attack-detector-function-${data.archive_file.default.output_md5}.zip"
   bucket = data.google_storage_bucket.source.name
   source = data.archive_file.default.output_path # Add path to the zipped function source code
 }

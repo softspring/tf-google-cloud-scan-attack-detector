@@ -18,10 +18,12 @@ const redisClient = redis.createClient({
     },
 });
 redisClient.on('error', err => console.error('ERR:REDIS:', err));
-redisClient.connect();
-redisClient.select(REDIS_DATABASE);
+const redisReady = redisClient.connect()
+    .then(() => redisClient.select(Number(REDIS_DATABASE)));
 
 functions.cloudEvent('detectScanAttack', async (cloudEvent) => {
+    await redisReady;
+
     const data = cloudEvent.data.message.data ? Buffer.from(cloudEvent.data.message.data, 'base64').toString() : '';
     const json = JSON.parse(data);
 
@@ -51,7 +53,9 @@ functions.cloudEvent('detectScanAttack', async (cloudEvent) => {
     const key = 'sad:' + fromIp + ':' + Math.random().toString(36).substring(7);
 
     // set the key with an expiration time in seconds (TTL)
-    await redisClient.set(key, resource, 'EX', NOT_FOUND_REQUEST_WINDOW);
+    await redisClient.set(key, resource, {
+        EX: Number(NOT_FOUND_REQUEST_WINDOW),
+    });
 
     console.log(`Register not found request from ${fromIp} to ${resource}`);
 
